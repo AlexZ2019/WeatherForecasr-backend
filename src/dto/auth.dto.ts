@@ -1,4 +1,10 @@
-export class AuthDto {
-    readonly email: string
-    readonly password: string
+import {ArgsType, Field} from "@nestjs/graphql";
+
+@ArgsType()
+export class authArgs {
+    @Field()
+    email: string
+
+    @Field()
+    password: string
 }
