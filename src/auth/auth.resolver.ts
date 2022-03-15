@@ -1,7 +1,7 @@
 import {Args, Query, Resolver} from "@nestjs/graphql";
 import {AuthService} from "./auth.service";
 import {User} from "./models/user";
-import {authArgs} from "../dto/auth.dto";
+import {authArgs} from "./dto/auth.dto";
 
 @Resolver(() => User)
 
