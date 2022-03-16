@@ -4,4 +4,16 @@ import {Field, ObjectType} from "@nestjs/graphql";
 export class User {
     @Field()
     email: string
+
+    @Field()
+    password: string
+
+    @Field()
+    userId: string
+}
+
+@ObjectType()
+export class Token {
+    @Field()
+    access_token: string
 }
