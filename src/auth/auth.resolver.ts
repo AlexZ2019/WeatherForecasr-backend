@@ -1,4 +1,4 @@
-import {Args, Query, Resolver} from "@nestjs/graphql";
+import {Args, Mutation, Query, Resolver} from "@nestjs/graphql";
 import {Token, User} from "./models/user";
 import {authArgs} from "./dto/auth.dto";
 import {UseGuards} from "@nestjs/common";
@@ -18,12 +18,11 @@ export class AuthResolver {
     @Query(() => User)
     @UseGuards(GqlAuthGuard)
     getAuth(@Args() authArgs: authArgs): User {
-        console.log(authArgs)
         return this.usersService.getUser(authArgs.email);
     }
 
-    @Query(() => Token)
-    getLogin(@Args() authArgs: authArgs): {access_token: string} {
-        return this.authService.login(authArgs as User)
+    @Mutation(() => Token)
+    async getLogin(@Args() authArgs: authArgs): Promise<{ accessToken: string, refreshToken: string }> {
+        return this.authService.login(authArgs)
     }
 }

@@ -7,13 +7,14 @@ export class User {
 
     @Field()
     password: string
-
-    @Field()
-    userId: string
 }
 
 @ObjectType()
 export class Token {
     @Field()
-    access_token: string
+    accessToken: string
+
+    @Field()
+    refreshToken: string
 }
+
