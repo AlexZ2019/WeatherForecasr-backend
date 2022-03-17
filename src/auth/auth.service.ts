@@ -35,11 +35,11 @@ export class AuthService {
 
         return {
             accessToken: this.jwtService.sign(payload),
-            refreshToken: this.jwtService.sign({}, {expiresIn: "2592000s"})
+            refreshToken: this.jwtService.sign(payload, {expiresIn: "2592000s"})
         }
     };
 
-    async tokenVerify(token: string): Promise<User> {
+    public async tokenVerify(token: string): Promise<User> {
 
         const decoded = this.jwtService.verify(token, {
             secret: jwtSecret
@@ -53,4 +53,18 @@ export class AuthService {
 
         return user
     }
+
+    public refreshToken(refreshToken: string) {
+        const decoded = this.jwtService.verify(refreshToken, {
+            secret: jwtSecret
+        });
+
+
+        return {
+            accessToken: this.jwtService.sign(decoded),
+            refreshToken: this.jwtService.sign(decoded, {expiresIn: "2592000s"})
+        }
+
+    }
+
 }
