@@ -2,7 +2,8 @@ import {Injectable, UnauthorizedException} from "@nestjs/common";
 import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import {User} from "./models/user";
-import {jwtSecret} from "./constants";
+import {ACCESS_TOKEN_TIMEOUT, jwtSecret, REFRESH_TOKEN_TIMEOUT} from "./constants";
+import {Tokens} from "./types";
 
 @Injectable()
 export class AuthService {
@@ -10,8 +11,7 @@ export class AuthService {
     constructor(
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService
-    ) {
-    };
+    ) {};
 
     private validatePassword(user: User): any {
 
@@ -20,7 +20,14 @@ export class AuthService {
         return null
     };
 
-    public async login(user: User): Promise<{ accessToken: string, refreshToken: string }> {
+    private generateTokens(payload) {
+        return {
+            accessToken: this.jwtService.sign(payload, {expiresIn: ACCESS_TOKEN_TIMEOUT}),
+            refreshToken: this.jwtService.sign(payload, {expiresIn: REFRESH_TOKEN_TIMEOUT})
+        }
+    }
+
+    public async login(user: User): Promise<Tokens> {
 
         const existedUser = await this.usersService.getUser(user.email);
 
@@ -33,25 +40,23 @@ export class AuthService {
             sub: existedUser.userId
         }
 
-        return {
-            accessToken: this.jwtService.sign(payload),
-            refreshToken: this.jwtService.sign(payload, {expiresIn: "2592000s"})
-        }
+        return this.generateTokens(payload);
     };
 
     public async tokenVerify(token: string): Promise<User> {
 
         const decoded = this.jwtService.verify(token, {
-            secret: jwtSecret
+            secret: jwtSecret,
+
         });
 
         const user = await this.usersService.getUser(decoded.email);
 
         if (!user) {
-            throw new Error("Unable to get user from decoded token.")
+            throw new Error("Unable to get user from decoded token.");
         }
 
-        return user
+        return user;
     }
 
     public refreshToken(refreshToken: string) {
@@ -59,12 +64,11 @@ export class AuthService {
             secret: jwtSecret
         });
 
-
-        return {
-            accessToken: this.jwtService.sign(decoded),
-            refreshToken: this.jwtService.sign(decoded, {expiresIn: "2592000s"})
+        const payload = {
+            email: decoded.email,
+            sub: decoded.sub
         }
 
+        return this.generateTokens(payload);
     }
-
 }

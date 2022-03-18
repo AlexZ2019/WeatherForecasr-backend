@@ -6,9 +6,9 @@ import {UsersService} from "../users/users.service";
 import {AuthService} from "./auth.service";
 import {UseGuards} from "@nestjs/common";
 import {GqlAuthGuard} from "./guards/gql-auth.guard";
+import {Tokens} from "./types";
 
 @Resolver(() => User)
-
 export class AuthResolver {
 
     constructor(
@@ -24,13 +24,13 @@ export class AuthResolver {
     }
 
     @Mutation(() => Token)
-    async getLogin(@Args() authArgs: AuthArgs): Promise<{ accessToken: string, refreshToken: string }> {
+    async getLogin(@Args() authArgs: AuthArgs): Promise<Tokens> {
         return this.authService.login(authArgs)
     }
 
-    @Query(() => Token)
+    @Mutation(() => Token)
     @UseGuards(GqlAuthGuard)
-    async refreshToken( @Context() context: GraphQLExecutionContext): Promise<{ accessToken: string; refreshToken: string }> {
+    async refreshToken( @Context() context: GraphQLExecutionContext): Promise<Tokens> {
         const token = context["req"].headers.authorization.replace('Bearer ', '')
         return this.authService.refreshToken(token);
     }
