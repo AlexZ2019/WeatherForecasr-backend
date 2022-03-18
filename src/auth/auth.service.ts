@@ -2,15 +2,17 @@ import {Injectable, UnauthorizedException} from "@nestjs/common";
 import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
 import {User} from "./models/user";
-import {ACCESS_TOKEN_TIMEOUT, jwtSecret, REFRESH_TOKEN_TIMEOUT} from "./constants";
+import {ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT} from "./constants";
 import {Tokens} from "./types";
+import {ConfigService} from "@nestjs/config";
 
 @Injectable()
 export class AuthService {
 
     constructor(
         private readonly usersService: UsersService,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService
     ) {};
 
     private validatePassword(user: User): any {
@@ -22,8 +24,8 @@ export class AuthService {
 
     private generateTokens(payload) {
         return {
-            accessToken: this.jwtService.sign(payload, {expiresIn: ACCESS_TOKEN_TIMEOUT}),
-            refreshToken: this.jwtService.sign(payload, {expiresIn: REFRESH_TOKEN_TIMEOUT})
+            accessToken: this.jwtService.sign(payload, {secret: this.configService.get("JWT_SECRET"), expiresIn: ACCESS_TOKEN_TIMEOUT}),
+            refreshToken: this.jwtService.sign(payload, {secret: this.configService.get("JWT_SECRET"), expiresIn: REFRESH_TOKEN_TIMEOUT})
         }
     }
 
@@ -46,7 +48,7 @@ export class AuthService {
     public async tokenVerify(token: string): Promise<User> {
 
         const decoded = this.jwtService.verify(token, {
-            secret: jwtSecret,
+            secret: this.configService.get("JWT_SECRET"),
 
         });
 
@@ -61,7 +63,7 @@ export class AuthService {
 
     public refreshToken(refreshToken: string) {
         const decoded = this.jwtService.verify(refreshToken, {
-            secret: jwtSecret
+            secret: this.configService.get("JWT_SECRET")
         });
 
         const payload = {
