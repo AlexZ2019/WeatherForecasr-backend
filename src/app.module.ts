@@ -19,7 +19,7 @@ import {TypeOrmModule} from "@nestjs/typeorm";
         password: config.get<string>("TYPEORM_PASSWORD"),
         database: config.get<string>("TYPEORM_DATABASE"),
         port: config.get<number>("TYPEORM_PORT"),
-        entities: [__dirname + "dist/**/*.entity{.ts,.js}"], // TODO: change pattern
+        entities: [__dirname + "users/**/*.entity{.ts,.js}"],
         synchronize: true,
         autoloadEntities: true,
         logging: true

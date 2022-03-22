@@ -19,8 +19,8 @@ export class AuthResolver {
 
     @Query(() => UserModel)
     @UseGuards(GqlAuthGuard)
-    async getAuth( @Context() context: GraphQLExecutionContext): Promise<UserModel> { // TODO: getUser
-        return this.usersService.getUser(context["req"].user.email); // TODO: change service
+    async getUser(@Context() context: GraphQLExecutionContext): Promise<UserModel> {
+        return this.usersService.getUser(context["req"].user.email);
     }
 
     @Mutation(() => Token)
