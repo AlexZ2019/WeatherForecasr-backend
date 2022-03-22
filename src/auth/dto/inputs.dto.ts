@@ -9,9 +9,3 @@ export class AuthArgs {
     @Field()
     password: string
 }
-
-@ArgsType()
-export class AccessToken {
-    @Field()
-    access_token: string
-}

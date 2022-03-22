@@ -5,7 +5,6 @@ import {ApolloDriver, ApolloDriverConfig} from "@nestjs/apollo";
 import {AuthModule} from "./auth/auth.module";
 import {UsersModule} from './users/users.module';
 import {TypeOrmModule} from "@nestjs/typeorm";
-import {config} from "rxjs";
 
 @Module({
   imports: [
@@ -14,13 +13,13 @@ import {config} from "rxjs";
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => ({
-        type: config.get<"aurora-data-api">("TYPEORM_CONNECTION"),
+        type: config.get<string>("TYPEORM_CONNECTION"),
         host: config.get<string>("TYPEORM_HOST"),
         username: config.get<string>("TYPEORM_USERNAME"),
         password: config.get<string>("TYPEORM_PASSWORD"),
         database: config.get<string>("TYPEORM_DATABASE"),
         port: config.get<number>("TYPEORM_PORT"),
-        entities: [__dirname + "dist/**/*.entity{.ts,.js}"],
+        entities: [__dirname + "dist/**/*.entity{.ts,.js}"], // TODO: change pattern
         synchronize: true,
         autoloadEntities: true,
         logging: true

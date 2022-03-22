@@ -1,10 +1,11 @@
 import {Injectable, UnauthorizedException} from "@nestjs/common";
 import {UsersService} from "../users/users.service";
 import {JwtService} from "@nestjs/jwt";
-import {User} from "./models/user";
 import {ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT} from "./constants";
 import {Tokens} from "./types";
 import {ConfigService} from "@nestjs/config";
+import {UserModel} from "./models/user.model";
+import {AuthArgs} from "./dto/inputs.dto";
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
         private readonly configService: ConfigService
     ) {};
 
-    private validatePassword(user: User): any {
+    private validatePassword(user: UserModel): any {
 
         // const passwordIsValid = user.password === user.password;
         // return passwordIsValid ? user : null
@@ -29,7 +30,7 @@ export class AuthService {
         }
     }
 
-    public async login(user: User): Promise<Tokens> {
+    public async login(user: AuthArgs): Promise<Tokens> {
 
         const existedUser = await this.usersService.getUser(user.email);
 
@@ -45,14 +46,14 @@ export class AuthService {
         return this.generateTokens(payload);
     };
 
-    public async tokenVerify(token: string): Promise<User> {
+    public async tokenVerify(token: string): Promise<UserModel> {
 
         const decoded = this.jwtService.verify(token, {
             secret: this.configService.get("JWT_SECRET"),
 
         });
 
-        const user = await this.usersService.getUser(decoded.email);
+        const user = await this.usersService.getUser(decoded.email); // TODO: move to guard
 
         if (!user) {
             throw new Error("Unable to get user from decoded token.");
