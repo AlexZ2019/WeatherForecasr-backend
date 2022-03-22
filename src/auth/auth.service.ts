@@ -46,21 +46,21 @@ export class AuthService {
         return this.generateTokens(payload);
     };
 
-    public async tokenVerify(token: string): Promise<UserModel> {
-
-        const decoded = this.jwtService.verify(token, {
-            secret: this.configService.get("JWT_SECRET"),
-
-        });
-
-        const user = await this.usersService.getUser(decoded.email); // TODO: move to guard
-
-        if (!user) {
-            throw new Error("Unable to get user from decoded token.");
-        }
-
-        return user;
-    }
+    // public async tokenVerify(token: string): Promise<UserModel> {
+    //
+    //     const decoded = this.jwtService.verify(token, {
+    //         secret: this.configService.get("JWT_SECRET"),
+    //
+    //     });
+    //
+    //     const user = await this.usersService.getUser(decoded.email);
+    //
+    //     if (!user) {
+    //         throw new Error("Unable to get user from decoded token.");
+    //     }
+    //
+    //     return user;
+    // }
 
     public refreshToken(refreshToken: string) {
         const decoded = this.jwtService.verify(refreshToken, {

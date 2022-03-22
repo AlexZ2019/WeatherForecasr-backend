@@ -17,20 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(validationPayload: { email: string, sub: string }): Promise<UserModel | null> { // TODO: save this info to context
-
-        console.log("validationPayload", validationPayload)
-
-        // const decoded = this.jwtService.verify(token, {
-        //     secret: this.configService.get("JWT_SECRET"),
-        //
-        // });
-        //
-        // const user = await this.usersService.getUser(decoded.email); // TODO: move to guard
-        //
-        // if (!user) {
-        //     throw new Error("Unable to get user from decoded token.");
-        // }
+    async validate(validationPayload: { email: string, sub: string }): Promise<UserModel | null> {
 
         return await this.usersService.getUser(validationPayload.email)
     }
