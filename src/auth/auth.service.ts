@@ -4,7 +4,6 @@ import {JwtService} from "@nestjs/jwt";
 import {ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT} from "./constants";
 import {Tokens} from "./types";
 import {ConfigService} from "@nestjs/config";
-import {UserModel} from "./models/user.model";
 import {AuthArgs} from "./dto/inputs.dto";
 
 @Injectable()
@@ -15,13 +14,6 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService
     ) {};
-
-    private validatePassword(user: UserModel): any {
-
-        // const passwordIsValid = user.password === user.password;
-        // return passwordIsValid ? user : null
-        return null
-    };
 
     private generateTokens(payload) {
         return {
@@ -40,27 +32,11 @@ export class AuthService {
 
         const payload = {
             email: existedUser.email,
-            sub: existedUser.userId
+            sub: existedUser.id
         }
 
         return this.generateTokens(payload);
     };
-
-    // public async tokenVerify(token: string): Promise<UserModel> {
-    //
-    //     const decoded = this.jwtService.verify(token, {
-    //         secret: this.configService.get("JWT_SECRET"),
-    //
-    //     });
-    //
-    //     const user = await this.usersService.getUser(decoded.email);
-    //
-    //     if (!user) {
-    //         throw new Error("Unable to get user from decoded token.");
-    //     }
-    //
-    //     return user;
-    // }
 
     public refreshToken(refreshToken: string) {
         const decoded = this.jwtService.verify(refreshToken, {
