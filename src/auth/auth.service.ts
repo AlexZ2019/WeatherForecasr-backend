@@ -35,7 +35,7 @@ export class AuthService {
             userId: existedUser.id
         }
 
-        return {...this.generateTokens(payload), ...payload};
+        return this.generateTokens(payload);
     };
 
     public refreshToken(refreshToken: string) {
@@ -45,7 +45,7 @@ export class AuthService {
 
         const payload = {
             email: decoded.email,
-            sub: decoded.sub
+            userId: decoded.userId
         }
 
         return this.generateTokens(payload);

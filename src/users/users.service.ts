@@ -11,7 +11,7 @@ export class UsersService {
     async getUser(email: string): Promise<any | undefined> {
         const res = await this.userRepository.findOneBy({email})
         return {
-            id: res.id,
+            userId: res.id,
             email: res.email
         }
     };

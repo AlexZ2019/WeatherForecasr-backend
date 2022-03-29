@@ -4,7 +4,7 @@ import {Field, ObjectType} from "@nestjs/graphql";
 export class UserModel {
 
     @Field()
-    id: string
+    userId: string
 
     @Field()
     email: string
