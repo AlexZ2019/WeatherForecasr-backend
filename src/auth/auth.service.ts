@@ -32,10 +32,10 @@ export class AuthService {
 
         const payload = {
             email: existedUser.email,
-            sub: existedUser.id
+            userId: existedUser.id
         }
 
-        return this.generateTokens(payload);
+        return {...this.generateTokens(payload), ...payload};
     };
 
     public refreshToken(refreshToken: string) {
