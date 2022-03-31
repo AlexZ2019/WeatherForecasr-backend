@@ -17,7 +17,7 @@ export class UsersService {
         email: res.email
       };
     } catch {
-      return false
+      return false;
     }
   };
 
