@@ -5,6 +5,7 @@ import {ApolloDriver, ApolloDriverConfig} from "@nestjs/apollo";
 import {AuthModule} from "./auth/auth.module";
 import {UsersModule} from './users/users.module';
 import {UsersDbModule} from "./db/users/users.db.module";
+import {WhetherForecastModule} from "./whetherForecast/whetherForecastModule";
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import {UsersDbModule} from "./db/users/users.db.module";
       context: ({req, res}) => ({req, res})
     }),
     AuthModule,
-    UsersModule
+    UsersModule,
+    WhetherForecastModule
   ]
 })
 

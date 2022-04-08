@@ -7,7 +7,6 @@ import { Tokens } from './types';
 import { AuthArgs } from './dto/inputs.dto';
 import { UserModel } from './models/user.model';
 import { Token } from './models/tokens.model';
-import { ApolloError } from 'apollo-server-express';
 
 @Resolver(() => UserModel)
 export class AuthResolver {
@@ -20,9 +19,9 @@ export class AuthResolver {
 
   @Query(() => UserModel)
   @UseGuards(GqlAuthGuard)
-  async getUser(@Context() context: GraphQLExecutionContext): Promise<UserModel | undefined> {
+  async getUser(@Context() context): Promise<UserModel | undefined> {
 
-    return this.usersService.getUser(context['req'].user.email);
+    return this.usersService.getUser(context.req.user.email);
   }
 
   @Mutation(() => Token)
@@ -31,14 +30,10 @@ export class AuthResolver {
   }
 
   @Mutation(() => Token)
+  // @UseGuards(GqlAuthGuard)
   async refreshToken(@Context() context: GraphQLExecutionContext): Promise<Tokens> {
     const token = context['req'].headers.authorization.replace('Bearer ', '');
-    try {
-      return this.authService.refreshToken(token);
-    }
-    catch {
-      throw new ApolloError("refresh token is expired", "400")
-    }
+    return this.authService.refreshToken(token);
   }
 
 }
