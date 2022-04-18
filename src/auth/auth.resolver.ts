@@ -30,10 +30,9 @@ export class AuthResolver {
   }
 
   @Mutation(() => Token)
-  // @UseGuards(GqlAuthGuard)
+  @UseGuards(GqlAuthGuard)
   async refreshToken(@Context() context: GraphQLExecutionContext): Promise<Tokens> {
     const token = context['req'].headers.authorization.replace('Bearer ', '');
     return this.authService.refreshToken(token);
   }
-
 }
