@@ -16,7 +16,6 @@ export class WeatherForecastService {
   async findCity(cityArgs: CityArgs): Promise<any | undefined> {
     const res = await this.weatherForecastApi.findCity(cityArgs.city);
     return res.pipe(
-      tap((data) => console.log(data)),
       map((resp) => {
         return resp.data.map(obj => {
           return {
