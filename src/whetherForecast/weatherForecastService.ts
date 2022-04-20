@@ -58,7 +58,6 @@ export class WeatherForecastService {
           lat: cityInfo.lat,
           lon: cityInfo.lon
         });
-        console.log('added new city response', res);
         await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
       } catch (err) {
         throw err;
