@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from '../../common/entities/baseEntity';
 
 @Entity()
-export class UserCity {
-  @PrimaryColumn()
+export class UserCity extends BaseEntity{
+  @Column()
   userid: number
 
   @Column()
