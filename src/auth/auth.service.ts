@@ -5,6 +5,7 @@ import { ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT } from './constants';
 import { Tokens } from './types';
 import { ConfigService } from '@nestjs/config';
 import { AuthArgs } from './dto/inputs.dto';
+import { comparePassword } from './utils/comparePassword';
 
 @Injectable()
 export class AuthService {
@@ -32,18 +33,22 @@ export class AuthService {
   public async login(user: AuthArgs): Promise<Tokens> {
 
     const existedUser = await this.usersService.getUser(user.email);
+    if (existedUser) {
+      const matched = comparePassword(user.password, existedUser.password);
+      if (matched) {
+        const payload = {
+          email: existedUser.email,
+          userId: existedUser.id
+        };
+
+        return this.generateTokens(payload);
+      }
+    }
     if (!existedUser) {
       throw new HttpException(
         { status: HttpStatus.NOT_FOUND, error: 'Invalid Credentials' },
         HttpStatus.NOT_FOUND);
     }
-
-    const payload = {
-      email: existedUser.email,
-      userId: existedUser.id
-    };
-
-    return this.generateTokens(payload);
   };
 
   public refreshToken(refreshToken: string) {

@@ -14,7 +14,8 @@ export class UsersService {
       const res = await this.userRepository.findOneBy({ email });
       return {
         userId: res.id,
-        email: res.email
+        email: res.email,
+        password: res.password
       };
     } catch {
       return false;

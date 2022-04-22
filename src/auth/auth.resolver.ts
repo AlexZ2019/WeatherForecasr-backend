@@ -20,8 +20,11 @@ export class AuthResolver {
   @Query(() => UserModel)
   @UseGuards(GqlAuthGuard)
   async getUser(@Context() context): Promise<UserModel | undefined> {
-
-    return this.usersService.getUser(context.req.user.email);
+    const userInfo = await this.usersService.getUser(context.req.user.email);
+    return {
+      userId: userInfo.userId,
+      email: userInfo.email
+    };
   }
 
   @Mutation(() => Token)
