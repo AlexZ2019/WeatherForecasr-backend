@@ -37,33 +37,45 @@ export class WeatherForecastService {
       lat: cityInfo.lat,
       lon: cityInfo.lon
     });
-    if (res) {
-      try {
-        await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
-      } catch (err) {
-        throw err;
-      }
-    } else {
-      try {
-        await this.cityRepository.save({
-          name: cityInfo.name,
-          lat: cityInfo.lat,
-          lon: cityInfo.lon,
-          country: cityInfo.country,
-          state: cityInfo.state
-        });
-        const res = await this.cityRepository.findOneBy({
-          lat: cityInfo.lat,
-          lon: cityInfo.lon
-        });
-        await this.userCityRepository.save({
-          cityId: res.id,
-          userid: cityInfo.userId
-        });
-      } catch (err) {
-        throw err;
+    try {
+      const isCityAdded = await this.userCityRepository.findOneBy({
+        cityId: res.id,
+        userid: cityInfo.userId
+      });
+      if (Boolean(isCityAdded)) {
+        return new Error('This city has already been added');
       }
     }
+    catch {
+      if (res) {
+        try {
+          await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
+        } catch (err) {
+          throw err;
+        }
+      } else {
+        try {
+          await this.cityRepository.save({
+            name: cityInfo.name,
+            lat: cityInfo.lat,
+            lon: cityInfo.lon,
+            country: cityInfo.country,
+            state: cityInfo.state
+          });
+          const res = await this.cityRepository.findOneBy({
+            lat: cityInfo.lat,
+            lon: cityInfo.lon
+          });
+          await this.userCityRepository.save({
+            cityId: res.id,
+            userid: cityInfo.userId
+          });
+        } catch (err) {
+          throw err;
+        }
+      }
+    }
+
     return {
       success: true
     };
@@ -106,8 +118,7 @@ export class WeatherForecastService {
             };
           })
         };
-      }),
-      tap((res) => console.log('res', res))
+      })
     );
   }
 }
