@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { City } from './entities/city';
 import { WeatherForecastApi } from './api/weatherForecastApi';
 import { CityArgs } from './dto/city';
-import { map, tap } from 'rxjs';
+import { map } from 'rxjs';
 import { AddCityArgs } from './dto/addCity';
 import { UserCity } from './entities/userСity';
 
@@ -45,34 +45,34 @@ export class WeatherForecastService {
       if (Boolean(isCityAdded)) {
         return new Error('This city has already been added');
       }
+    } catch {
+
     }
-    catch {
-      if (res) {
-        try {
-          await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
-        } catch (err) {
-          throw err;
-        }
-      } else {
-        try {
-          await this.cityRepository.save({
-            name: cityInfo.name,
-            lat: cityInfo.lat,
-            lon: cityInfo.lon,
-            country: cityInfo.country,
-            state: cityInfo.state
-          });
-          const res = await this.cityRepository.findOneBy({
-            lat: cityInfo.lat,
-            lon: cityInfo.lon
-          });
-          await this.userCityRepository.save({
-            cityId: res.id,
-            userid: cityInfo.userId
-          });
-        } catch (err) {
-          throw err;
-        }
+    if (res) {
+      try {
+        await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
+      } catch (err) {
+        return err;
+      }
+    } else {
+      try {
+        await this.cityRepository.save({
+          name: cityInfo.name,
+          lat: cityInfo.lat,
+          lon: cityInfo.lon,
+          country: cityInfo.country,
+          state: cityInfo.state
+        });
+        const res = await this.cityRepository.findOneBy({
+          lat: cityInfo.lat,
+          lon: cityInfo.lon
+        });
+        await this.userCityRepository.save({
+          cityId: res.id,
+          userid: cityInfo.userId
+        });
+      } catch {
+
       }
     }
 
