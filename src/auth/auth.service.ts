@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT } from './constants';
@@ -6,6 +6,7 @@ import { Tokens } from './types';
 import { ConfigService } from '@nestjs/config';
 import { AuthArgs } from './dto/inputs.dto';
 import { comparePassword } from './utils/comparePassword';
+import { GraphQLError } from 'graphql';
 
 @Injectable()
 export class AuthService {
@@ -45,9 +46,7 @@ export class AuthService {
       }
     }
     if (!existedUser) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_FOUND, error: 'Invalid Credentials' },
-        HttpStatus.NOT_FOUND);
+      throw new GraphQLError("Invalid Credentials")
     }
   };
 
