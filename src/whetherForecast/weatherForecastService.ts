@@ -10,7 +10,6 @@ import { UserCity } from './entities/userСity';
 
 @Injectable()
 export class WeatherForecastService {
-
   constructor(@InjectRepository(City) private readonly cityRepository: Repository<City>,
               @InjectRepository(UserCity) private readonly userCityRepository: Repository<UserCity>,
               private readonly weatherForecastApi: WeatherForecastApi) {
@@ -19,7 +18,6 @@ export class WeatherForecastService {
   async findCity(cityArgs: CityArgs): Promise<any | undefined> {
     const res = await this.weatherForecastApi.findCity(cityArgs.city);
     return res.pipe(
-      tap((data) => console.log(data)),
       map((resp) => {
         return resp.data.map(obj => {
           return {
@@ -58,7 +56,10 @@ export class WeatherForecastService {
           lat: cityInfo.lat,
           lon: cityInfo.lon
         });
-        await this.userCityRepository.save({ cityId: res.id, userid: cityInfo.userId });
+        await this.userCityRepository.save({
+          cityId: res.id,
+          userid: cityInfo.userId
+        });
       } catch (err) {
         throw err;
       }
@@ -66,5 +67,47 @@ export class WeatherForecastService {
     return {
       success: true
     };
+  }
+
+  async getUserCitiesId(userId: number) {
+    const userCitiesId = await this.userCityRepository.findBy({ userid: userId });
+    return userCitiesId.map((obj) => {
+      return {
+        cityId: obj.cityId
+      };
+    });
+  }
+
+  async deleteCity(userId: number, cityId: number) {
+    const rowToDelete = await this.userCityRepository.findOneBy({ cityId, userid: userId });
+    await this.userCityRepository.delete(rowToDelete.id);
+    return {
+      success: true
+    };
+  }
+
+  async getWeatherForecast(cityId: number) {
+    const city = await this.cityRepository.findOneBy({ id: cityId });
+    return this.weatherForecastApi.getForecast(city.lat, city.lon).pipe(
+      map(res => {
+        return {
+          name: city.name,
+          country: city.country,
+          state: city.state,
+          weatherForecast: res.data.daily.map((obj) => {
+            return {
+              humidity: obj.humidity,
+              windSpeed: obj.wind_speed,
+              temp: {
+                tempDay: obj.temp.day,
+                tempNight: obj.temp.night
+              },
+              clouds: obj.clouds
+            };
+          })
+        };
+      }),
+      tap((res) => console.log('res', res))
+    );
   }
 }

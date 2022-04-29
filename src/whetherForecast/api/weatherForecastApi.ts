@@ -12,13 +12,11 @@ export class WeatherForecastApi {
   findCity(city: string): Observable<AxiosResponse> {
 
     return this.httpService.get(
-      `${this.configService.get('API_WEATHER_HOST')}
-      geo/1.0/direct?q=${city}&limit=5&appid=${this.configService.get('WEATHER_API_KEY')}`);
+      `${this.configService.get('API_WEATHER_HOST')}geo/1.0/direct?q=${city}&limit=5&appid=${this.configService.get('WEATHER_API_KEY')}`);
   }
 
-  getForecast(lat, long): Observable<AxiosResponse> {
-    return this.httpService.get(`${this.configService.get('API_WEATHER_HOST')}
-      onecall?lat=${lat}&lon=${long}&units=metric&exclude=minutely,hourly,alerts,current
-      &appid=${this.configService.get('WEATHER_API_KEY')}`);
+  getForecast(lat: string, lon: string): Observable<AxiosResponse> {
+    console.log("coords",lat,lon)
+    return this.httpService.get(`${this.configService.get('API_WEATHER_HOST')}data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly,alerts,current&appid=${this.configService.get('WEATHER_API_KEY')}`)
   }
 }

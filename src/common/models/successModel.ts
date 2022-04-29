@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class AddCityModel {
+export class SuccessModel {
   @Field()
   success: boolean
 }

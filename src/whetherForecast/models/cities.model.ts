@@ -10,10 +10,10 @@ export class CitiesModel {
   country: string;
 
   @Field()
-  lat: number;
+  lat: string;
 
   @Field()
-  lon: number;
+  lon: string;
 
   @Field()
   state: string;

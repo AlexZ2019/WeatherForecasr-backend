@@ -1,17 +1,19 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../common/entities/baseEntity';
+import { Injectable } from '@nestjs/common';
 
 @Entity()
+@Injectable()
 export class City extends BaseEntity {
 
     @Column()
     name: string
 
     @Column()
-    lon: number
+    lon: string
 
     @Column()
-    lat: number
+    lat: string
 
     @Column()
     country: string
