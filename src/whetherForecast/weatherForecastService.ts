@@ -38,11 +38,14 @@ export class WeatherForecastService {
       lon: cityInfo.lon
     });
     try {
-      const isCityAdded = await this.userCityRepository.findOneBy({
-        cityId: res.id,
+      const userCities = await this.userCityRepository.findBy({
         userid: cityInfo.userId
       });
-      if (Boolean(isCityAdded)) {
+      if (userCities.length === 10) {
+        return new Error('You can\'t add more than 10 cards');
+      }
+      const isCityAdded = userCities.filter((userCity) => userCity.cityId === res.id);
+      if (Boolean(isCityAdded[0])) {
         return new Error('This city has already been added');
       }
     } catch {
