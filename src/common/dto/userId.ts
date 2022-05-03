@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
-export class UserId {
+export default class UserId {
   @Field()
   userId: number;
 }

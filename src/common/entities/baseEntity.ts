@@ -1,13 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class BaseEntity {
+export default class BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  created_at: string
+  created_at: string;
 
   @Column()
-  updated_at: string
+  updated_at: string;
 }

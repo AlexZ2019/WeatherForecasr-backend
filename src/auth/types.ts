@@ -1,11 +1,10 @@
 export type Tokens = {
-    accessToken: string,
-    refreshToken: string
-}
-
+  accessToken: string;
+  refreshToken: string;
+};
 
 declare namespace Express {
-    export interface Request {
-        user: any;
-    }
+  export interface Request {
+    user: any;
+  }
 }

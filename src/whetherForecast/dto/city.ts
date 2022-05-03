@@ -1,7 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
-export class CityArgs {
+export default class CityArgs {
   @Field()
   city: string;
 }

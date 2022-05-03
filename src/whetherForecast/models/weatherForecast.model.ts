@@ -3,47 +3,47 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 class Temp {
   @Field()
-  tempDay: number
+  tempDay: number;
 
   @Field()
-  tempNight: number
+  tempNight: number;
 }
 
 @ObjectType()
 class Weather {
   @Field()
-  main: string
+  main: string;
 
   @Field()
-  description: string
+  description: string;
 }
 
 @ObjectType()
-export class DailyWeatherForecastModel {
+class DailyWeatherForecastModel {
   @Field()
-  humidity: number
+  humidity: number;
 
   @Field()
-  windSpeed: number
+  windSpeed: number;
 
   @Field(() => Temp)
   temp: [Temp];
 
   @Field(() => Weather)
-  weather: [Weather]
+  weather: [Weather];
 }
 
-@ObjectType ()
-export class WeatherForecastModel {
+@ObjectType()
+export default class WeatherForecastModel {
   @Field()
-  name: string
+  name: string;
 
   @Field()
-  state: string
+  state: string;
 
   @Field()
-  country: string
+  country: string;
 
   @Field(() => [DailyWeatherForecastModel])
-  weatherForecast: DailyWeatherForecastModel
+  weatherForecast: DailyWeatherForecastModel;
 }

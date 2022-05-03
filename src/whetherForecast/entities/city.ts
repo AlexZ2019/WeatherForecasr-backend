@@ -1,23 +1,22 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '../../common/entities/baseEntity';
 import { Injectable } from '@nestjs/common';
+import BaseEntity from '../../common/entities/baseEntity';
 
 @Entity()
 @Injectable()
-export class City extends BaseEntity {
+export default class City extends BaseEntity {
+  @Column()
+  name: string;
 
-    @Column()
-    name: string
+  @Column()
+  lon: string;
 
-    @Column()
-    lon: string
+  @Column()
+  lat: string;
 
-    @Column()
-    lat: string
+  @Column()
+  country: string;
 
-    @Column()
-    country: string
-
-    @Column()
-    state: string
+  @Column()
+  state: string;
 }

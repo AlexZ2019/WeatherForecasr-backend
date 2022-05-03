@@ -1,24 +1,36 @@
 module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: [
+    'airbnb-base',
+    'prettier',
+    'plugin:nestjs/recommended'
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: 'tsconfig.json',
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
+  plugins: [
+    '@typescript-eslint',
   ],
-  root: true,
-  env: {
-    node: true,
-    jest: true,
-  },
-  ignorePatterns: ['.eslintrc.js'],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    'nestjs/parse-int-pipe': 'off',
+    'nestjs/deprecated-api-modules': 'off',
+    'nestjs/use-validation-pipe': 'off',
+    'import/no-unresolved': 'off',
+    'nestjs/use-dependency-injection': 'off',
+    'import/extensions': 'off',
+    'no-useless-constructor': 'off',
+    'no-unused-vars': 'off',
+    'no-empty-function': 'off',
+    'consistent-return': 'off',
+    'class-methods-use-this': 'off',
+    'no-undef': 'off',
+    'max-classes-per-file': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'no-shadow': 'off'
   },
 };

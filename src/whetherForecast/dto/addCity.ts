@@ -1,8 +1,7 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
 @ArgsType()
-export class AddCityArgs {
-
+export default class AddCityArgs {
   @Field()
   name: string;
 
@@ -19,5 +18,5 @@ export class AddCityArgs {
   state: string;
 
   @Field()
-  userId: number
+  userId: number;
 }

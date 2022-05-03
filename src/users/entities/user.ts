@@ -1,12 +1,11 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '../../common/entities/baseEntity';
+import BaseEntity from '../../common/entities/baseEntity';
 
 @Entity()
-export class User extends BaseEntity {
+export default class User extends BaseEntity {
+  @Column()
+  email: string;
 
-    @Column()
-    email: string
-
-    @Column()
-    password: string
+  @Column()
+  password: string;
 }

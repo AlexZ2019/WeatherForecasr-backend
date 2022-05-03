@@ -1,11 +1,11 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '../../common/entities/baseEntity';
+import BaseEntity from '../../common/entities/baseEntity';
 
 @Entity()
-export class UserCity extends BaseEntity{
+export default class UserCity extends BaseEntity {
   @Column()
-  userid: number
+  userid: number;
 
   @Column()
-  cityId: number
+  cityId: number;
 }

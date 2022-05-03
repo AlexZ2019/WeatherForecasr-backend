@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SuccessModel {
+export default class SuccessModel {
   @Field()
-  success: boolean
+  success: boolean;
 }

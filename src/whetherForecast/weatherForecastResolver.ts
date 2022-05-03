@@ -1,21 +1,22 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CitiesModel } from './models/cities.model';
-import { WeatherForecastService } from './weatherForecastService';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
-import { CityArgs } from './dto/city';
-import { AddCityArgs } from './dto/addCity';
-import { SuccessModel } from '../common/models/successModel';
-import { UserId } from '../common/dto/userId';
-import { WeatherForecastModel } from './models/weatherForecast.model';
-import { CityIdModel } from './models/cityId.model';
-import { CityIdArgs } from './dto/cityId';
-import { DeleteCityArgs } from './dto/deleteCity';
+import GqlAuthGuard from '../auth/guards/gql-auth.guard';
+import SuccessModel from '../common/models/successModel';
+import UserId from '../common/dto/userId';
+import WeatherForecastService from './weatherForecastService';
+import DeleteCityArgs from './dto/deleteCity';
+import CityIdModel from './models/cityId.model';
+import WeatherForecastModel from './models/weatherForecast.model';
+import CitiesModel from './models/cities.model';
+import CityArgs from './dto/city';
+import CityIdArgs from './dto/cityId';
+import AddCityArgs from './dto/addCity';
 
 @Resolver()
-export class WeatherForecastResolver {
-
-  constructor(private readonly weatherForecastService: WeatherForecastService) {}
+export default class WeatherForecastResolver {
+  constructor(
+    private readonly weatherForecastService: WeatherForecastService,
+  ) {}
 
   @Query(() => [CitiesModel])
   @UseGuards(GqlAuthGuard)
@@ -32,7 +33,10 @@ export class WeatherForecastResolver {
   @Mutation(() => SuccessModel)
   @UseGuards(GqlAuthGuard)
   async deleteCity(@Args() deleteCityArgs: DeleteCityArgs) {
-    return this.weatherForecastService.deleteCity(deleteCityArgs.userId, deleteCityArgs.cityId);
+    return this.weatherForecastService.deleteCity(
+      deleteCityArgs.userId,
+      deleteCityArgs.cityId,
+    );
   }
 
   @Query(() => [CityIdModel])

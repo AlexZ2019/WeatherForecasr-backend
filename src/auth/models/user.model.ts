@@ -1,11 +1,10 @@
-import {Field, ObjectType} from "@nestjs/graphql";
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserModel {
+export default class UserModel {
+  @Field()
+  userId: string;
 
-    @Field()
-    userId: string
-
-    @Field()
-    email: string
+  @Field()
+  email: string;
 }

@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class CityIdModel {
-
+export default class CityIdModel {
   @Field()
-  cityId: number
+  cityId: number;
 }

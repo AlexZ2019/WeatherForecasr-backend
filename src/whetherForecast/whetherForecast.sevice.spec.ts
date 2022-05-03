@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {WeatherForecastService} from "./weatherForecastService";
-
+import { WeatherForecastService } from './weatherForecastService';
 
 describe('WhetherForecastService', () => {
   let service: WeatherForecastService;

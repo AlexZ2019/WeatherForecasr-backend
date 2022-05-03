@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user';
+import User from './entities/user';
 
 @Injectable()
-export class UsersService {
-
-  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {
-  }
+export default class UsersService {
+  constructor(
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+  ) {}
 
   async getUser(email: string): Promise<any | undefined> {
     try {
@@ -15,11 +15,10 @@ export class UsersService {
       return {
         userId: res.id,
         email: res.email,
-        password: res.password
+        password: res.password,
       };
     } catch {
       return false;
     }
-  };
-
+  }
 }

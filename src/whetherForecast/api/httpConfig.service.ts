@@ -5,9 +5,10 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 class HttpConfigService implements HttpModuleOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
+
   createHttpOptions(): HttpModuleOptions {
     return {
-      baseURL: this.configService.get('API_WHEATHER_HOST')
+      baseURL: this.configService.get('API_WHEATHER_HOST'),
     };
   }
 }

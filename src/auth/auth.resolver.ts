@@ -1,21 +1,20 @@
-import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UsersService } from '../users/users.service';
-import { AuthService } from './auth.service';
-import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from './guards/gql-auth.guard';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { Tokens } from './types';
-import { AuthArgs } from './dto/inputs.dto';
-import { UserModel } from './models/user.model';
-import { Token } from './models/tokens.model';
+import AuthService from './auth.service';
+import AuthArgs from './dto/inputs.dto';
+import GqlAuthGuard from './guards/gql-auth.guard';
+import Token from './models/tokens.model';
+import UserModel from './models/user.model';
+import UsersService from '../users/users.service';
 
+@Injectable()
 @Resolver(() => UserModel)
-export class AuthResolver {
-
+export default class AuthResolver {
   constructor(
     private readonly usersService: UsersService,
-    private readonly authService: AuthService
-  ) {
-  }
+    private readonly authService: AuthService,
+  ) {}
 
   @Query(() => UserModel)
   @UseGuards(GqlAuthGuard)
@@ -23,7 +22,7 @@ export class AuthResolver {
     const userInfo = await this.usersService.getUser(context.req.user.email);
     return {
       userId: userInfo.userId,
-      email: userInfo.email
+      email: userInfo.email,
     };
   }
 
@@ -34,8 +33,8 @@ export class AuthResolver {
 
   @Mutation(() => Token)
   @UseGuards(GqlAuthGuard)
-  async refreshToken(@Context() context: GraphQLExecutionContext): Promise<Tokens> {
-    const token = context['req'].headers.authorization.replace('Bearer ', '');
+  async refreshToken(@Context() context): Promise<Tokens> {
+    const token = context.req.headers.authorization.replace('Bearer ', '');
     return this.authService.refreshToken(token);
   }
 }
