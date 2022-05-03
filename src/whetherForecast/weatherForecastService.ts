@@ -114,7 +114,10 @@ export class WeatherForecastService {
                 tempDay: obj.temp.day,
                 tempNight: obj.temp.night
               },
-              clouds: obj.clouds
+              weather: {
+                main: obj.weather[0].main,
+                description: obj.weather[0].description
+              }
             };
           })
         };

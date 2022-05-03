@@ -9,26 +9,32 @@ class Temp {
   tempNight: number
 }
 
+@ObjectType()
+class Weather {
+  @Field()
+  main: string
+
+  @Field()
+  description: string
+}
 
 @ObjectType()
 export class DailyWeatherForecastModel {
-
   @Field()
   humidity: number
 
   @Field()
   windSpeed: number
 
-  @Field()
-  clouds: number
-
   @Field(() => Temp)
   temp: [Temp];
+
+  @Field(() => Weather)
+  weather: [Weather]
 }
 
 @ObjectType ()
 export class WeatherForecastModel {
-
   @Field()
   name: string
 
