@@ -8,7 +8,12 @@ import WeatherResolver from './weather.resolver';
 import WeatherApi from './api/weather.api';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([City, UserCity]), HttpModule],
+  imports: [TypeOrmModule.forFeature([City, UserCity]), HttpModule.register({
+    baseURL: 'http://api.openweathermap.org/',
+    params: {
+      appid: 'e90c7d39dc20f82c07095175419f9379'
+    }
+  })],
   providers: [
     WeatherResolver,
     WeatherService,
