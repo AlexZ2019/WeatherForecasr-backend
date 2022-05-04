@@ -9,11 +9,11 @@ export default class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async getUser(email: string): Promise<any | undefined> {
+  async getUserByEmail(email: string): Promise<any | undefined> {
     try {
       const res = await this.userRepository.findOneBy({ email });
       return {
-        userId: res.id,
+        id: res.id,
         email: res.email,
         password: res.password,
       };

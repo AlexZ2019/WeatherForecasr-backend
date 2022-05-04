@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export default class UserModel {
   @Field()
-  userId: string;
+  id: number;
 
   @Field()
   email: string;

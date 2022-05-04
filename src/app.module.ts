@@ -4,8 +4,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import AuthModule from './auth/auth.module';
 import UsersDbModule from './db/users/users.db.module';
-import UsersModule from './users/users.module';
-import WhetherForecastModule from './whetherForecast/whetherForecastModule';
+import UsersModule from './user/users.module';
+import WeatherModule from './weather/weather.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import WhetherForecastModule from './whetherForecast/whetherForecastModule';
     }),
     AuthModule,
     UsersModule,
-    WhetherForecastModule,
+    WeatherModule,
   ],
 })
 export default class AppModule {}

@@ -6,7 +6,7 @@ import { ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT } from './constants';
 import { Tokens } from './types';
 import AuthArgs from './dto/inputs.dto';
 import comparePassword from './utils/comparePassword';
-import UsersService from '../users/users.service';
+import UsersService from '../user/users.service';
 
 @Injectable()
 export default class AuthService {
@@ -30,13 +30,13 @@ export default class AuthService {
   }
 
   public async login(user: AuthArgs): Promise<Tokens> {
-    const existedUser = await this.usersService.getUser(user.email);
+    const existedUser = await this.usersService.getUserByEmail(user.email);
     if (existedUser) {
       const matched = comparePassword(user.password, existedUser.password);
       if (matched) {
         const payload = {
           email: existedUser.email,
-          userId: existedUser.id,
+          id: existedUser.id,
         };
 
         return this.generateTokens(payload);
@@ -54,7 +54,7 @@ export default class AuthService {
 
     const payload = {
       email: decoded.email,
-      userId: decoded.userId,
+      id: decoded.id,
     };
 
     return this.generateTokens(payload);

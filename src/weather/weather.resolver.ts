@@ -3,19 +3,19 @@ import { UseGuards } from '@nestjs/common';
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
 import SuccessModel from '../common/models/successModel';
 import UserId from '../common/dto/userId';
-import WeatherForecastService from './weatherForecastService';
-import DeleteCityArgs from './dto/deleteCity';
+import WeatherService from './weather.service';
+import DeleteCityArgs from './dto/deleteCity.dto';
 import CityIdModel from './models/cityId.model';
-import WeatherForecastModel from './models/weatherForecast.model';
+import WeatherModel from './models/weather.model';
 import CitiesModel from './models/cities.model';
-import CityArgs from './dto/city';
-import CityIdArgs from './dto/cityId';
-import AddCityArgs from './dto/addCity';
+import CityArgs from './dto/city.dto';
+import CityIdArgs from './dto/cityId.dto';
+import AddCityArgs from './dto/addCity.dto';
 
 @Resolver()
-export default class WeatherForecastResolver {
+export default class WeatherResolver {
   constructor(
-    private readonly weatherForecastService: WeatherForecastService,
+    private readonly weatherForecastService: WeatherService,
   ) {}
 
   @Query(() => [CitiesModel])
@@ -45,7 +45,7 @@ export default class WeatherForecastResolver {
     return this.weatherForecastService.getUserCitiesId(userIdArgs.userId);
   }
 
-  @Query(() => WeatherForecastModel)
+  @Query(() => WeatherModel)
   @UseGuards(GqlAuthGuard)
   async getCityWeatherForecast(@Args() cityIdArgs: CityIdArgs) {
     return this.weatherForecastService.getWeatherForecast(cityIdArgs.cityId);

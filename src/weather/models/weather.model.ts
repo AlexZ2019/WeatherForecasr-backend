@@ -19,7 +19,7 @@ class Weather {
 }
 
 @ObjectType()
-class DailyWeatherForecastModel {
+class DailyWeatherModel {
   @Field()
   humidity: number;
 
@@ -34,7 +34,7 @@ class DailyWeatherForecastModel {
 }
 
 @ObjectType()
-export default class WeatherForecastModel {
+export default class WeatherModel {
   @Field()
   name: string;
 
@@ -44,6 +44,6 @@ export default class WeatherForecastModel {
   @Field()
   country: string;
 
-  @Field(() => [DailyWeatherForecastModel])
-  weatherForecast: DailyWeatherForecastModel;
+  @Field(() => [DailyWeatherModel])
+  weatherForecast: DailyWeatherModel;
 }

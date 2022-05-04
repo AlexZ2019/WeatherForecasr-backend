@@ -2,31 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
-import City from './entities/city';
-import UserCity from './entities/userСity';
-import CityArgs from './dto/city';
-import WeatherForecastApi from './api/weatherForecastApi';
-import AddCityArgs from './dto/addCity';
+import City from './entities/city.entity';
+import UserCity from './entities/userСity.entity';
+import CityArgs from './dto/city.dto';
+import WeatherApi from './api/weather.api';
+import AddCityArgs from './dto/addCity.dto';
 
 @Injectable()
-export default class WeatherForecastService {
+export default class WeatherService {
   constructor(
     @InjectRepository(City) private readonly cityRepository: Repository<City>,
     @InjectRepository(UserCity)
     private readonly userCityRepository: Repository<UserCity>,
-    private readonly weatherForecastApi: WeatherForecastApi,
+    private readonly weatherForecastApi: WeatherApi,
   ) {}
 
   async findCity(cityArgs: CityArgs): Promise<any | undefined> {
     const res = await this.weatherForecastApi.findCity(cityArgs.city);
     return res.pipe(
       map((resp) =>
-        resp.data.map((obj) => ({
-          name: obj.name,
-          country: obj.country,
-          state: obj.state,
-          lat: obj.lat,
-          lon: obj.lon,
+        resp.data.map((city) => ({
+          name: city.name,
+          country: city.country,
+          state: city.state,
+          lat: city.lat,
+          lon: city.lon,
         })),
       ),
     );
