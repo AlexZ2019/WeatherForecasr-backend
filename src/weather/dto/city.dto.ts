@@ -4,4 +4,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 export default class CityArgs {
   @Field()
   city: string;
+
+  @Field()
+  userId: number;
 }

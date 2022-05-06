@@ -16,4 +16,7 @@ export default class CitiesModel {
 
   @Field()
   state: string;
+
+  @Field()
+  isAdded: boolean
 }

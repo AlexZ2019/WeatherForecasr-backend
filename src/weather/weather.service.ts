@@ -14,37 +14,63 @@ export default class WeatherService {
     @InjectRepository(City) private readonly cityRepository: Repository<City>,
     @InjectRepository(UserCity)
     private readonly userCityRepository: Repository<UserCity>,
-    private readonly weatherApi: WeatherApi,
-  ) {}
+    private readonly weatherApi: WeatherApi
+  ) {
+  }
 
-  async findCity(cityArgs: CityArgs): Promise<any | undefined> {
+  generateCity(city, isAdded) {
+    return {
+      name: city.name,
+      country: city.country,
+      state: city.state,
+      lat: city.lat,
+      lon: city.lon,
+      isAdded
+    };
+  }
+
+  async findCity(cityArgs: CityArgs) {
     const res = await this.weatherApi.findCity(cityArgs.city);
+    const userCitiesIds = await this.userCityRepository.findBy({
+      userid: cityArgs.userId
+    });
+    let addedCities = [];
+    for (const cityId of userCitiesIds) {
+      const city = await this.cityRepository.findOneBy({
+        id: cityId.cityId
+      });
+      if (city) {
+        addedCities.push(city);
+      }
+    }
     return res.pipe(
       map((resp) =>
-        resp.data.map((city) => ({
-          name: city.name,
-          country: city.country,
-          state: city.state,
-          lat: city.lat,
-          lon: city.lon,
-        })),
-      ),
+        resp.data.map((city) => {
+          if (addedCities.some((addedCity) => {
+            return +addedCity.lat === city.lat && +addedCity.lon === city.lon;
+          })) {
+            return this.generateCity(city, true);
+          } else {
+            return this.generateCity(city, false);
+          }
+        })
+      )
     );
   }
 
   async addCity(cityInfo: AddCityArgs) {
     const res = await this.cityRepository.findOneBy({
       lat: cityInfo.lat,
-      lon: cityInfo.lon,
+      lon: cityInfo.lon
     });
     const userCities = await this.userCityRepository.findBy({
-      userid: cityInfo.userId,
+      userid: cityInfo.userId
     });
     if (userCities.length === 10) {
-      return new Error("You can't add more than 10 cards");
+      return new Error('You can\'t add more than 10 cards');
     }
     const isCityAdded = userCities.filter(
-      (userCity) => userCity.cityId === res.id,
+      (userCity) => userCity.cityId === res.id
     );
     if (isCityAdded[0]) {
       return new Error('This city has already been added');
@@ -54,7 +80,7 @@ export default class WeatherService {
       try {
         await this.userCityRepository.save({
           cityId: res.id,
-          userid: cityInfo.userId,
+          userid: cityInfo.userId
         });
       } catch (err) {
         return err;
@@ -65,40 +91,40 @@ export default class WeatherService {
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         country: cityInfo.country,
-        state: cityInfo.state,
+        state: cityInfo.state
       });
       const res = await this.cityRepository.findOneBy({
         lat: cityInfo.lat,
-        lon: cityInfo.lon,
+        lon: cityInfo.lon
       });
       await this.userCityRepository.save({
         cityId: res.id,
-        userid: cityInfo.userId,
+        userid: cityInfo.userId
       });
     }
 
     return {
-      success: true,
+      success: true
     };
   }
 
   async getCitiesIds(userId: number) {
     const citiesIds = await this.userCityRepository.findBy({
-      userid: userId,
+      userid: userId
     });
     return citiesIds.map((city) => ({
-      cityId: city.cityId,
+      cityId: city.cityId
     }));
   }
 
   async deleteCity(userId: number, cityId: number) {
     const rowToDelete = await this.userCityRepository.findOneBy({
       cityId,
-      userid: userId,
+      userid: userId
     });
     await this.userCityRepository.delete(rowToDelete.id);
     return {
-      success: true,
+      success: true
     };
   }
 
@@ -114,14 +140,14 @@ export default class WeatherService {
           windSpeed: obj.wind_speed,
           temp: {
             tempDay: obj.temp.day,
-            tempNight: obj.temp.night,
+            tempNight: obj.temp.night
           },
           weather: {
             main: obj.weather[0].main,
-            description: obj.weather[0].description,
-          },
-        })),
-      })),
+            description: obj.weather[0].description
+          }
+        }))
+      }))
     );
   }
 }
