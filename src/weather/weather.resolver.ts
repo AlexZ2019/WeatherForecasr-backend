@@ -15,25 +15,25 @@ import AddCityArgs from './dto/addCity.dto';
 @Resolver()
 export default class WeatherResolver {
   constructor(
-    private readonly weatherForecastService: WeatherService,
+    private readonly weatherService: WeatherService,
   ) {}
 
   @Query(() => [CitiesModel])
   @UseGuards(GqlAuthGuard)
   async findCity(@Args() cityArgs: CityArgs) {
-    return this.weatherForecastService.findCity(cityArgs);
+    return this.weatherService.findCity(cityArgs);
   }
 
   @Mutation(() => SuccessModel)
   @UseGuards(GqlAuthGuard)
   async addCity(@Args() cityInfo: AddCityArgs) {
-    return this.weatherForecastService.addCity(cityInfo);
+    return this.weatherService.addCity(cityInfo);
   }
 
   @Mutation(() => SuccessModel)
   @UseGuards(GqlAuthGuard)
   async deleteCity(@Args() deleteCityArgs: DeleteCityArgs) {
-    return this.weatherForecastService.deleteCity(
+    return this.weatherService.deleteCity(
       deleteCityArgs.userId,
       deleteCityArgs.cityId,
     );
@@ -41,13 +41,13 @@ export default class WeatherResolver {
 
   @Query(() => [CityIdModel])
   @UseGuards(GqlAuthGuard)
-  async getUserCitiesId(@Args() userIdArgs: UserId) {
-    return this.weatherForecastService.getUserCitiesId(userIdArgs.userId);
+  async getCitiesIds(@Args() userIdArgs: UserId) {
+    return this.weatherService.getCitiesIds(userIdArgs.userId);
   }
 
   @Query(() => WeatherModel)
   @UseGuards(GqlAuthGuard)
-  async getCityWeatherForecast(@Args() cityIdArgs: CityIdArgs) {
-    return this.weatherForecastService.getWeatherForecast(cityIdArgs.cityId);
+  async getWeather(@Args() cityIdArgs: CityIdArgs) {
+    return this.weatherService.getWeather(cityIdArgs.cityId);
   }
 }

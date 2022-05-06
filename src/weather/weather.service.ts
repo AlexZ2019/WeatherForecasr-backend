@@ -14,11 +14,11 @@ export default class WeatherService {
     @InjectRepository(City) private readonly cityRepository: Repository<City>,
     @InjectRepository(UserCity)
     private readonly userCityRepository: Repository<UserCity>,
-    private readonly weatherForecastApi: WeatherApi,
+    private readonly weatherApi: WeatherApi,
   ) {}
 
   async findCity(cityArgs: CityArgs): Promise<any | undefined> {
-    const res = await this.weatherForecastApi.findCity(cityArgs.city);
+    const res = await this.weatherApi.findCity(cityArgs.city);
     return res.pipe(
       map((resp) =>
         resp.data.map((city) => ({
@@ -82,12 +82,12 @@ export default class WeatherService {
     };
   }
 
-  async getUserCitiesId(userId: number) {
-    const userCitiesId = await this.userCityRepository.findBy({
+  async getCitiesIds(userId: number) {
+    const citiesIds = await this.userCityRepository.findBy({
       userid: userId,
     });
-    return userCitiesId.map((obj) => ({
-      cityId: obj.cityId,
+    return citiesIds.map((city) => ({
+      cityId: city.cityId,
     }));
   }
 
@@ -102,9 +102,9 @@ export default class WeatherService {
     };
   }
 
-  async getWeatherForecast(cityId: number) {
+  async getWeather(cityId: number) {
     const city = await this.cityRepository.findOneBy({ id: cityId });
-    return this.weatherForecastApi.getForecast(city.lat, city.lon).pipe(
+    return this.weatherApi.getWeather(city.lat, city.lon).pipe(
       map((res) => ({
         name: city.name,
         country: city.country,

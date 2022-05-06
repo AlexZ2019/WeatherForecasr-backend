@@ -15,7 +15,7 @@ export default class WeatherApi {
     );
   }
 
-  getForecast(lat: string, lon: string): Observable<AxiosResponse> {
+  getWeather(lat: string, lon: string): Observable<AxiosResponse> {
     return this.httpService.get(
       `data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly,alerts,current`,
     );
