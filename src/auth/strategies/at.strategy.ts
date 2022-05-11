@@ -6,7 +6,7 @@ import UserService from '../../user/user.service';
 import { UserPayload } from '../types';
 
 @Injectable()
-export default class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export default class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly usersService: UserService,
     private readonly configService: ConfigService,
@@ -14,17 +14,17 @@ export default class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: configService.get('JWT_AT_SECRET'),
     });
   }
 
   async validate(validationPayload: {
     email: string;
-    sub: number;
+    id: number;
   }): Promise<UserPayload> {
     return {
       email: validationPayload.email,
-      id: validationPayload.sub
+      id: validationPayload.id
     };
   }
 }

@@ -7,6 +7,9 @@ import { Tokens } from './types';
 import AuthArgs from './dto/inputs.dto';
 import comparePassword from './utils/comparePassword';
 import UserService from '../user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Token } from './entities/token.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export default class AuthService {
@@ -14,18 +17,20 @@ export default class AuthService {
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+    @InjectRepository(Token) private readonly tokenRepository: Repository<Token>
+  ) {
+  }
 
   private generateTokens(payload) {
     return {
       accessToken: this.jwtService.sign(payload, {
-        secret: this.configService.get('JWT_SECRET'),
-        expiresIn: ACCESS_TOKEN_TIMEOUT,
+        secret: this.configService.get('JWT_AT_SECRET'),
+        expiresIn: ACCESS_TOKEN_TIMEOUT
       }),
       refreshToken: this.jwtService.sign(payload, {
-        secret: this.configService.get('JWT_SECRET'),
-        expiresIn: REFRESH_TOKEN_TIMEOUT,
-      }),
+        secret: this.configService.get('JWT_RT_SECRET'),
+        expiresIn: REFRESH_TOKEN_TIMEOUT
+      })
     };
   }
 
@@ -36,10 +41,14 @@ export default class AuthService {
       if (matched) {
         const payload = {
           email: existedUser.email,
-          id: existedUser.id,
+          id: existedUser.id
         };
-
-        return this.generateTokens(payload);
+        const tokens = this.generateTokens(payload);
+        await this.tokenRepository.save({
+          userId: existedUser.id,
+          ...tokens
+        });
+        return tokens;
       }
     }
     if (!existedUser) {
@@ -47,16 +56,21 @@ export default class AuthService {
     }
   }
 
-  public refreshToken(refreshToken: string) {
-    const decoded = this.jwtService.verify(refreshToken, {
-      secret: this.configService.get('JWT_SECRET'),
+  public async refreshToken(payload) {
+    const newTokens = this.generateTokens(payload);
+    await this.tokenRepository.save({
+      userId: payload.id,
+      ...newTokens
     });
+    return newTokens;
+  }
 
-    const payload = {
-      email: decoded.email,
-      id: decoded.id,
-    };
+  public getTokens(userId: number) {
+    return this.tokenRepository.findBy({ userId });
+  }
 
-    return this.generateTokens(payload);
+  public logout(userId: number) {
+    console.log(userId);
+    return this.tokenRepository.delete({ userId });
   }
 }
