@@ -4,8 +4,7 @@ import AuthService from './auth.service';
 import AuthArgs from './dto/inputs.dto';
 import Tokens from './models/tokens.model';
 import RefreshTokenGuard from './guards/refreshToken.guard';
-import GqlAuthGuard from './guards/gql-auth.guard';
-import logoutArgs from './dto/logout.dto';
+import AccessTokenGuard from './guards/accessToken.guard';
 
 @Injectable()
 @Resolver(() => Tokens)
@@ -22,13 +21,13 @@ export default class AuthResolver {
   @Mutation(() => Tokens)
   @UseGuards(RefreshTokenGuard)
   async refreshToken(@Context() context): Promise<Tokens> {
-    return this.authService.refreshToken(context.req.user);
+    return this.authService.refreshToken(context.req.user, context.req.headers.authorization.replace('Bearer', ''));
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard)
-  async logout(@Args() logoutArgs: logoutArgs) {
-    return this.authService.logout(logoutArgs.userId);
+  @UseGuards(AccessTokenGuard)
+  async logout(@Context() context) {
+    return this.authService.logout(context.user.id, context.req.headers.authorization.replace('Bearer', ''));
   }
 }
 

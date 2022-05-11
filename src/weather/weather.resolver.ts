@@ -1,6 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import GqlAuthGuard from '../auth/guards/gql-auth.guard';
+import AccessTokenGuard from '../auth/guards/accessToken.guard';
 import UserId from '../common/dto/userId';
 import WeatherService from './weather.service';
 import DeleteCityArgs from './dto/deleteCity.dto';
@@ -18,20 +18,20 @@ export default class WeatherResolver {
   ) {}
 
   @Query(() => [CitiesModel])
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async findCity(@Args() cityArgs: CityArgs) {
     return this.weatherService.findCity(cityArgs);
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async addCity(@Args() cityInfo: AddCityArgs): Promise<boolean> {
     await this.weatherService.addCity(cityInfo);
     return true;
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async deleteCity(@Args() deleteCityArgs: DeleteCityArgs) {
     await this.weatherService.deleteCity(
       deleteCityArgs.userId,
@@ -41,13 +41,13 @@ export default class WeatherResolver {
   }
 
   @Query(() => [CityIdModel])
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async getCitiesIds(@Args() userIdArgs: UserId) {
     return this.weatherService.getCitiesIds(userIdArgs.userId);
   }
 
   @Query(() => WeatherModel)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async getWeather(@Args() cityIdArgs: CityIdArgs) {
     return this.weatherService.getWeather(cityIdArgs.cityId);
   }

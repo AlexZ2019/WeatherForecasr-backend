@@ -4,8 +4,8 @@ import { JwtModule } from '@nestjs/jwt';
 import AuthResolver from './auth.resolver';
 import AuthService from './auth.service';
 import UserModule from '../user/user.module';
-import AtStrategy from './strategies/at.strategy';
-import RtStrategy from './strategies/rt.strategy';
+import AccessTokenStrategy from './strategies/accessToken.strategy';
+import RefreshTokenStrategy from './strategies/refreshToken.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Token } from './entities/token.entity';
 
@@ -16,7 +16,7 @@ import { Token } from './entities/token.entity';
     JwtModule.register({}),
     TypeOrmModule.forFeature([Token])
   ],
-  providers: [AuthResolver, AuthService, AtStrategy, RtStrategy],
+  providers: [AuthResolver, AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   exports: [AuthService]
 })
 export default class AuthModule {}

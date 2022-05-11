@@ -6,7 +6,7 @@ import UserService from '../../user/user.service';
 import { UserPayload } from '../types';
 
 @Injectable()
-export default class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export default class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly usersService: UserService,
     private readonly configService: ConfigService,

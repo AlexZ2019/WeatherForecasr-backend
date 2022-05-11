@@ -35,7 +35,7 @@ export default class AuthService {
   }
 
   public async login(user: AuthArgs): Promise<Tokens> {
-    const existedUser = await this.usersService.getUserByEmail(user.email);
+    const existedUser = await this.usersService.getUserByEmailWithPassword(user.email);
     if (existedUser) {
       const matched = comparePassword(user.password, existedUser.password);
       if (matched) {
@@ -56,10 +56,11 @@ export default class AuthService {
     }
   }
 
-  public async refreshToken(payload) {
-    const newTokens = this.generateTokens(payload);
+  public async refreshToken(user: {id: number, email: string}, refreshToken: string) {
+    const newTokens = this.generateTokens(user);
+    await this.tokenRepository.delete({ userId: user.id, refreshToken });
     await this.tokenRepository.save({
-      userId: payload.id,
+      userId: user.id,
       ...newTokens
     });
     return newTokens;
@@ -69,8 +70,7 @@ export default class AuthService {
     return this.tokenRepository.findBy({ userId });
   }
 
-  public logout(userId: number) {
-    console.log(userId);
-    return this.tokenRepository.delete({ userId });
+  public logout(userId: number, accessToken: string) {
+    return this.tokenRepository.delete({ userId, accessToken });
   }
 }

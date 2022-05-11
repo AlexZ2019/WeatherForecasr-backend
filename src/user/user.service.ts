@@ -9,16 +9,13 @@ export default class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  getUserByEmail(email: string): Promise<{id: number, email: string, password: string}> {
+  getUserByEmailWithPassword(email: string): Promise<{id: number, email: string, password: string}> {
     return this.userRepository.findOneBy({ email });
   }
 
-  async getCurrentUserByEmailWithoutPassword(email: string) {
+  async getUserByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
-    return {
-      id: user.id,
-      email: user.email
-    }
+    const {password, ...restUser} = user;
+    return restUser
   }
-
 }

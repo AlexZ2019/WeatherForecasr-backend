@@ -1,7 +1,7 @@
 import { Injectable, UseGuards } from '@nestjs/common';
 import { Context, Query, Resolver } from '@nestjs/graphql';
 import UserModel from './models/user.model';
-import GqlAuthGuard from '../auth/guards/gql-auth.guard';
+import AccessTokenGuard from '../auth/guards/accessToken.guard';
 import UserService from './user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Token } from '../auth/entities/token.entity';
@@ -16,11 +16,11 @@ class UserResolver {
   ) {}
 
   @Query(() => UserModel)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AccessTokenGuard)
   async getCurrentUser(@Context() context): Promise<UserModel | undefined> {
     const tokens = await this.tokenRepository.findBy({userId: context.req.user.id});
     if (tokens.some((token) => token.accessToken === context.req.headers.authorization.replace('Bearer ', ''))) {
-      return this.userService.getCurrentUserByEmailWithoutPassword(context.req.user.email);
+      return this.userService.getUserByEmail(context.req.user.email);
     }
   }
 }

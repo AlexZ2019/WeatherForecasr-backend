@@ -7,7 +7,7 @@ import { UserPayload } from '../types';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export default class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export default class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private readonly usersService: UserService,
     private readonly configService: ConfigService,
