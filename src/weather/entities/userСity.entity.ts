@@ -4,7 +4,7 @@ import BaseEntity from '../../common/entities/baseEntity';
 @Entity()
 export default class UserCity extends BaseEntity {
   @Column()
-  userid: number;
+  userId: number;
 
   @Column()
   cityId: number;

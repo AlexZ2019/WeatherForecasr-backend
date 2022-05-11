@@ -6,12 +6,12 @@ import { ACCESS_TOKEN_TIMEOUT, REFRESH_TOKEN_TIMEOUT } from './constants';
 import { Tokens } from './types';
 import AuthArgs from './dto/inputs.dto';
 import comparePassword from './utils/comparePassword';
-import UsersService from '../user/users.service';
+import UserService from '../user/user.service';
 
 @Injectable()
 export default class AuthService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}

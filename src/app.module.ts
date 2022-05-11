@@ -4,7 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import AuthModule from './auth/auth.module';
 import UsersDbModule from './db/users/users.db.module';
-import UsersModule from './user/users.module';
+import UserModule from './user/user.module';
 import WeatherModule from './weather/weather.module';
 
 @Module({
@@ -17,7 +17,7 @@ import WeatherModule from './weather/weather.module';
       context: ({ req, res }) => ({ req, res }),
     }),
     AuthModule,
-    UsersModule,
+    UserModule,
     WeatherModule,
   ],
 })

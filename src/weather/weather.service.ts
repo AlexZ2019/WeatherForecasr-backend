@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import City from './entities/city.entity';
@@ -7,6 +7,7 @@ import UserCity from './entities/userСity.entity';
 import CityArgs from './dto/city.dto';
 import WeatherApi from './api/weather.api';
 import AddCityArgs from './dto/addCity.dto';
+import { CARDS_COUNT } from './constants';
 
 @Injectable()
 export default class WeatherService {
@@ -30,87 +31,68 @@ export default class WeatherService {
   }
 
   async findCity(cityArgs: CityArgs) {
-    const res = await this.weatherApi.findCity(cityArgs.city);
-    const userCitiesIds = await this.userCityRepository.findBy({
-      userid: cityArgs.userId
+    const foundCities = await this.weatherApi.findCity(cityArgs.city);
+    const userCities = await this.userCityRepository.findBy({
+      userId: cityArgs.userId
     });
-    let addedCities = [];
-    for (const cityId of userCitiesIds) {
-      const city = await this.cityRepository.findOneBy({
-        id: cityId.cityId
-      });
-      if (city) {
-        addedCities.push(city);
-      }
-    }
-    return res.pipe(
-      map((resp) =>
-        resp.data.map((city) => {
-          if (addedCities.some((addedCity) => {
-            return +addedCity.lat === city.lat && +addedCity.lon === city.lon;
-          })) {
-            return this.generateCity(city, true);
-          } else {
-            return this.generateCity(city, false);
-          }
+    const cityIds = userCities.map((userCity) => userCity.cityId);
+    const addedCities = await this.cityRepository.findBy({ id: In(cityIds) });
+    return foundCities.pipe(
+      map((foundCities) =>
+        foundCities.data.map((city) => {
+          const isAddedCity = addedCities.some((addedCity) => {
+            return Number(addedCity.lat) === city.lat && Number(addedCity.lon === city.lon);
+          });
+          return this.generateCity(city, isAddedCity);
         })
       )
     );
   }
 
   async addCity(cityInfo: AddCityArgs) {
-    const res = await this.cityRepository.findOneBy({
+    const city = await this.cityRepository.findOneBy({
       lat: cityInfo.lat,
       lon: cityInfo.lon
     });
     const userCities = await this.userCityRepository.findBy({
-      userid: cityInfo.userId
+      userId: cityInfo.userId
     });
-    if (userCities.length === 10) {
+    if (userCities.length === CARDS_COUNT) {
       return new Error('You can\'t add more than 10 cards');
     }
-    const isCityAdded = userCities.filter(
-      (userCity) => userCity.cityId === res.id
-    );
-    if (isCityAdded[0]) {
-      return new Error('This city has already been added');
-    }
 
-    if (res) {
-      try {
-        await this.userCityRepository.save({
-          cityId: res.id,
-          userid: cityInfo.userId
-        });
-      } catch (err) {
-        return err;
+    if (city) {
+      const isCityAdded = userCities.some(
+        (userCity) => {
+          return userCity.cityId === city.id;
+        }
+      );
+
+      if (isCityAdded) {
+        return new Error('This city has already been added');
       }
+      await this.userCityRepository.save({
+        cityId: city.id,
+        userId: cityInfo.userId
+      });
     } else {
-      await this.cityRepository.save({
+     const savedCity = await this.cityRepository.save({
         name: cityInfo.name,
         lat: cityInfo.lat,
         lon: cityInfo.lon,
         country: cityInfo.country,
         state: cityInfo.state
       });
-      const res = await this.cityRepository.findOneBy({
-        lat: cityInfo.lat,
-        lon: cityInfo.lon
-      });
       await this.userCityRepository.save({
-        cityId: res.id,
+        cityId: savedCity.id,
         userid: cityInfo.userId
       });
     }
-
-    return {
-      success: true
-    };
   }
 
   async getCitiesIds(userId: number) {
     const citiesIds = await this.userCityRepository.findBy({
-      userid: userId
+      userId
     });
     return citiesIds.map((city) => ({
       cityId: city.cityId
@@ -120,31 +102,29 @@ export default class WeatherService {
   async deleteCity(userId: number, cityId: number) {
     const rowToDelete = await this.userCityRepository.findOneBy({
       cityId,
-      userid: userId
+      userId
     });
-    await this.userCityRepository.delete(rowToDelete.id);
-    return {
-      success: true
-    };
+
+    return this.userCityRepository.delete(rowToDelete.id);
   }
 
   async getWeather(cityId: number) {
     const city = await this.cityRepository.findOneBy({ id: cityId });
     return this.weatherApi.getWeather(city.lat, city.lon).pipe(
-      map((res) => ({
+      map((weather) => ({
         name: city.name,
         country: city.country,
         state: city.state,
-        weatherForecast: res.data.daily.map((obj) => ({
-          humidity: obj.humidity,
-          windSpeed: obj.wind_speed,
+        weatherForecast: weather.data.daily.map((day) => ({
+          humidity: day.humidity,
+          windSpeed: day.wind_speed,
           temp: {
-            tempDay: obj.temp.day,
-            tempNight: obj.temp.night
+            tempDay: day.temp.day,
+            tempNight: day.temp.night
           },
           weather: {
-            main: obj.weather[0].main,
-            description: obj.weather[0].description
+            main: day.weather[0].main,
+            description: day.weather[0].description
           }
         }))
       }))

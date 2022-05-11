@@ -1,7 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import GqlAuthGuard from '../auth/guards/gql-auth.guard';
-import SuccessModel from '../common/models/successModel';
 import UserId from '../common/dto/userId';
 import WeatherService from './weather.service';
 import DeleteCityArgs from './dto/deleteCity.dto';
@@ -24,19 +23,21 @@ export default class WeatherResolver {
     return this.weatherService.findCity(cityArgs);
   }
 
-  @Mutation(() => SuccessModel)
+  @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
-  async addCity(@Args() cityInfo: AddCityArgs) {
-    return this.weatherService.addCity(cityInfo);
+  async addCity(@Args() cityInfo: AddCityArgs): Promise<boolean> {
+    await this.weatherService.addCity(cityInfo);
+    return true;
   }
 
-  @Mutation(() => SuccessModel)
+  @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
   async deleteCity(@Args() deleteCityArgs: DeleteCityArgs) {
-    return this.weatherService.deleteCity(
+    await this.weatherService.deleteCity(
       deleteCityArgs.userId,
       deleteCityArgs.cityId,
     );
+    return true
   }
 
   @Query(() => [CityIdModel])
