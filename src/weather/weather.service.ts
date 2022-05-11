@@ -31,7 +31,7 @@ export default class WeatherService {
   }
 
   async findCity(cityArgs: CityArgs) {
-    const foundCities = await this.weatherApi.findCity(cityArgs.city);
+    const foundCities = await this.weatherApi.findCity({q: cityArgs.city, limit: 5});
     const userCities = await this.userCityRepository.findBy({
       userId: cityArgs.userId
     });
@@ -110,7 +110,12 @@ export default class WeatherService {
 
   async getWeather(cityId: number) {
     const city = await this.cityRepository.findOneBy({ id: cityId });
-    return this.weatherApi.getWeather(city.lat, city.lon).pipe(
+    return this.weatherApi.getWeather({
+      lat: city.lat,
+      lon: city.lon,
+      units: 'metric',
+      exclude: 'minutely,hourly,alerts,current',
+    }).pipe(
       map((weather) => ({
         name: city.name,
         country: city.country,

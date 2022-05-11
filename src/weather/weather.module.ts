@@ -6,13 +6,18 @@ import WeatherService from './weather.service';
 import UserCity from './entities/userСity.entity';
 import WeatherResolver from './weather.resolver';
 import WeatherApi from './api/weather.api';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([City, UserCity]), HttpModule.register({
-    baseURL: 'http://api.openweathermap.org/',
-    params: {
-      appid: 'e90c7d39dc20f82c07095175419f9379'
-    }
+  imports: [TypeOrmModule.forFeature([City, UserCity]), HttpModule.registerAsync({
+    imports:[ConfigModule],
+    useFactory: async (configService: ConfigService) => ({
+      baseURL:  'http://api.openweathermap.org/',
+      params: {
+        appid: configService.get('WEATHER_API_KEY')
+      }
+    }),
+    inject: [ConfigService]
   })],
   providers: [
     WeatherResolver,

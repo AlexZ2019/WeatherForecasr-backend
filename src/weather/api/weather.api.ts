@@ -9,15 +9,19 @@ export default class WeatherApi {
     private httpService: HttpService,
   ) {}
 
-  findCity(city: string): Observable<AxiosResponse> {
+  findCity(params): Observable<AxiosResponse> {
     return this.httpService.get(
-      `geo/1.0/direct?q=${city}&limit=5`,
+      `geo/1.0/direct`, {
+        params
+      }
     );
   }
 
-  getWeather(lat: string, lon: string): Observable<AxiosResponse> {
+  getWeather(params): Observable<AxiosResponse> {
     return this.httpService.get(
-      `data/2.5/onecall?lat=${lat}&lon=${lon}&units=metric&exclude=minutely,hourly,alerts,current`,
+      `data/2.5/onecall`, {
+        params
+      }
     );
   }
 }
