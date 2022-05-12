@@ -1,7 +1,6 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import AccessTokenGuard from '../auth/guards/accessToken.guard';
-import UserId from '../common/dto/userId';
 import WeatherService from './weather.service';
 import DeleteCityArgs from './dto/deleteCity.dto';
 import CityIdModel from './models/cityId.model';
@@ -19,31 +18,31 @@ export default class WeatherResolver {
 
   @Query(() => [CitiesModel])
   @UseGuards(AccessTokenGuard)
-  async findCity(@Args() cityArgs: CityArgs) {
-    return this.weatherService.findCity(cityArgs);
+  async findCity(@Args() cityArgs: CityArgs, @Context() context) {
+    return this.weatherService.findCity(cityArgs, context.req.user.id);
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AccessTokenGuard)
-  async addCity(@Args() cityInfo: AddCityArgs): Promise<boolean> {
-    await this.weatherService.addCity(cityInfo);
+  async addCity(@Args() cityInfo: AddCityArgs, @Context() context): Promise<boolean> {
+    await this.weatherService.addCity(cityInfo, context.req.user.id);
     return true;
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AccessTokenGuard)
-  async deleteCity(@Args() deleteCityArgs: DeleteCityArgs) {
+  async deleteCity(@Args() deleteCityArgs: DeleteCityArgs, @Context() context) {
     await this.weatherService.deleteCity(
-      deleteCityArgs.userId,
-      deleteCityArgs.cityId,
+      context.req.user.id,
+      deleteCityArgs.cityId
     );
     return true
   }
 
   @Query(() => [CityIdModel])
   @UseGuards(AccessTokenGuard)
-  async getCitiesIds(@Args() userIdArgs: UserId) {
-    return this.weatherService.getCitiesIds(userIdArgs.userId);
+  async getCitiesIds(@Context() context) {
+    return this.weatherService.getCitiesIds(context.req.user.id);
   }
 
   @Query(() => WeatherModel)

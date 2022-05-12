@@ -30,10 +30,10 @@ export default class WeatherService {
     };
   }
 
-  async findCity(cityArgs: CityArgs) {
+  async findCity(cityArgs: CityArgs, userId: number) {
     const foundCities = await this.weatherApi.findCity({q: cityArgs.city, limit: 5});
     const userCities = await this.userCityRepository.findBy({
-      userId: cityArgs.userId
+      userId
     });
     const cityIds = userCities.map((userCity) => userCity.cityId);
     const addedCities = await this.cityRepository.findBy({ id: In(cityIds) });
@@ -49,13 +49,13 @@ export default class WeatherService {
     );
   }
 
-  async addCity(cityInfo: AddCityArgs) {
+  async addCity(cityInfo: AddCityArgs, userId: number) {
     const city = await this.cityRepository.findOneBy({
       lat: cityInfo.lat,
       lon: cityInfo.lon
     });
     const userCities = await this.userCityRepository.findBy({
-      userId: cityInfo.userId
+      userId
     });
     if (userCities.length === CARDS_COUNT) {
       return new Error('You can\'t add more than 10 cards');
@@ -73,7 +73,7 @@ export default class WeatherService {
       }
       await this.userCityRepository.save({
         cityId: city.id,
-        userId: cityInfo.userId
+        userId
       });
     } else {
      const savedCity = await this.cityRepository.save({
@@ -85,7 +85,7 @@ export default class WeatherService {
       });
       await this.userCityRepository.save({
         cityId: savedCity.id,
-        userid: cityInfo.userId
+        userId
       });
     }
   }

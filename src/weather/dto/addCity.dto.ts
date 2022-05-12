@@ -17,6 +17,4 @@ export default class AddCityArgs {
   @Field()
   state: string;
 
-  @Field()
-  userId: number;
 }
