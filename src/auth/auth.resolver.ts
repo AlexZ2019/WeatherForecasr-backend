@@ -21,13 +21,14 @@ export default class AuthResolver {
   @Mutation(() => Tokens)
   @UseGuards(RefreshTokenGuard)
   async refreshToken(@Context() context): Promise<Tokens> {
-    return this.authService.refreshToken(context.req.user, context.req.headers.authorization.replace('Bearer', ''));
+    return this.authService.refreshToken(context.req.user, context.req.headers.authorization.replace('Bearer ', ''));
   }
 
   @Mutation(() => Boolean)
   @UseGuards(AccessTokenGuard)
   async logout(@Context() context) {
-    return this.authService.logout(context.user.id, context.req.headers.authorization.replace('Bearer', ''));
+    await this.authService.logout(context.req.user.id, context.req.headers.authorization.replace('Bearer ', ''));
+    return true;
   }
 }
 
